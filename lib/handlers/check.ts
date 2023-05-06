@@ -19,6 +19,29 @@ type ResponseType =
       message: string;
     };
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const MAX_RETRIES = 5;
+const withRetry = async <T>(
+  fn: () => Promise<T>,
+  retries = MAX_RETRIES
+): Promise<T> => {
+  try {
+    return await fn();
+  } catch (e) {
+    if (retries > 0) {
+      console.log("retrying...", retries);
+      // exponential backoff
+      // with gitter
+      sleep(2 ** (3 - retries) * 300);
+
+      return await withRetry(fn, retries - 1);
+    } else {
+      throw e;
+    }
+  }
+};
+
 export const handleCheck = async (req: Request): Promise<Response> => {
   const { document, rule } = (await req.json()) as RequestBody;
 
@@ -48,13 +71,14 @@ message: string;
     },
   ];
 
-  const completion = await createChatCompletion({
-    model: "gpt-4",
-    messages: msgs,
-  });
+  const completion = await withRetry(() =>
+    createChatCompletion({
+      model: "gpt-4",
+      messages: msgs,
+    })
+  );
 
   const result = completion.choices[0].message?.content;
-  console.log(msgs, result);
 
   if (!result) throw new Error("No result from OpenAI");
 
