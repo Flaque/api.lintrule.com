@@ -1,5 +1,5 @@
 // import openai
-import { openai } from "../openai.ts";
+import { createChatCompletion } from "../openai.ts";
 
 export interface RequestBody {
   document: string;
@@ -22,7 +22,7 @@ type ResponseType =
 export const handleCheck = async (req: Request): Promise<Response> => {
   const { document, rule } = (await req.json()) as RequestBody;
 
-  const completion = await openai.createChatCompletion({
+  const completion = await createChatCompletion({
     model: "gpt-4",
     messages: [
       {
@@ -51,8 +51,7 @@ type Response = {
     ],
   });
 
-  const result = completion.data.choices[0].message?.content;
-  console.log("result", result);
+  const result = completion.choices[0].message?.content;
 
   if (!result) throw new Error("No result from OpenAI");
 
