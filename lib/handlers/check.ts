@@ -30,10 +30,10 @@ const withRetry = async <T>(
     return await fn();
   } catch (e) {
     if (retries > 0) {
-      console.log("retrying...", retries);
       // exponential backoff
-      // with gitter
-      sleep(2 ** (3 - retries) * 300);
+      // with random jitter
+      const jitter = Math.random() * 500;
+      sleep(2 ** (3 - retries) * 300 + jitter);
 
       return await withRetry(fn, retries - 1);
     } else {
