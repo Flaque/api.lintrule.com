@@ -33,7 +33,7 @@ const withRetry = async <T>(
       // exponential backoff
       // with random jitter
       const jitter = Math.random() * 500;
-      sleep(2 ** (3 - retries) * 300 + jitter);
+      await sleep(2 ** (3 - retries) * 300 + jitter);
 
       return await withRetry(fn, retries - 1);
     } else {
