@@ -11,7 +11,7 @@ const CHECK_ROUTE = new URLPattern({ pathname: "/check" });
 const handler = async (request: Request): Promise<Response> => {
   try {
     if (INDEX_ROUTE.test(request.url) && request.method === "GET") {
-      return new Response("HIIII VANESSA SEE", { status: 200 });
+      return new Response("this is the lintrule api", { status: 200 });
     }
 
     if (LOGIN_ROUTE.test(request.url) && request.method === "POST") {
