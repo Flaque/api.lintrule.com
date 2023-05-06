@@ -43,7 +43,11 @@ export async function createChatCompletion(args: {
         messages: args.messages,
       }),
     });
-    if (!response.ok) throw new Error("OpenAI API error");
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error("OpenAI API error: " + text);
+    }
 
     return await response.json();
   } catch (error) {
