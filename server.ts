@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.180.0/http/server.ts";
-import { handleCheck } from "./handlers/check.ts";
-import { handleLogin } from "./handlers/login.ts";
+import { handleCheck } from "./lib/handlers/check.ts";
+import { handleLogin } from "./lib/handlers/login.ts";
 
 const port = 8080;
 
