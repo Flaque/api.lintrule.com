@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.180.0/http/server.ts";
 import { handleCheck } from "./lib/handlers/check.ts";
-import { handleLogin } from "./lib/handlers/login.ts";
 
 const port = 8080;
 
@@ -11,11 +10,7 @@ const CHECK_ROUTE = new URLPattern({ pathname: "/check" });
 const handler = async (request: Request): Promise<Response> => {
   try {
     if (INDEX_ROUTE.test(request.url) && request.method === "GET") {
-      return new Response("so fast!!", { status: 200 });
-    }
-
-    if (LOGIN_ROUTE.test(request.url) && request.method === "POST") {
-      return await handleLogin(request);
+      return new Response("hackathon rule", { status: 200 });
     }
     if (CHECK_ROUTE.test(request.url) && request.method === "POST") {
       return await handleCheck(request);
