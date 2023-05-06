@@ -22,36 +22,39 @@ type ResponseType =
 export const handleCheck = async (req: Request): Promise<Response> => {
   const { document, rule } = (await req.json()) as RequestBody;
 
+  const msgs = [
+    {
+      role: "system",
+      content: `You are a linter. You are given first a rule and then document. You must decide whether the document passes the rule.`,
+    },
+    {
+      role: "user",
+      content: `<|RULE|>\n\n\n${rule}\n\n\n<|ENDRULE|>`,
+    },
+    {
+      role: "user",
+      content: `<|DOCUMENT|>\n\n\n${document}\n\n\n<|ENDDOCUMENT|>`,
+    },
+    {
+      role: "system",
+      content: `Respond in json this type.
+type Response = {
+pass: true;
+} | {
+pass: false;
+message: string;
+}
+      `,
+    },
+  ];
+
   const completion = await createChatCompletion({
     model: "gpt-4",
-    messages: [
-      {
-        role: "system",
-        content: `You are a linter. You are given first a rule and then document. You must decide whether the document passes the rule.`,
-      },
-      {
-        role: "user",
-        content: `<|RULE|>\n\n\n${rule}\n\n\n<|ENDRULE|>`,
-      },
-      {
-        role: "user",
-        content: `<|DOCUMENT|>\n\n\n${document}\n\n\n<|ENDDOCUMENT|>`,
-      },
-      {
-        role: "system",
-        content: `Respond in json this type.
-type Response = {
-  pass: true;
-} | {
-  pass: false;
-  message: string;
-}
-        `,
-      },
-    ],
+    messages: msgs,
   });
 
   const result = completion.choices[0].message?.content;
+  console.log(msgs, result);
 
   if (!result) throw new Error("No result from OpenAI");
 
