@@ -4,11 +4,16 @@ import { handleLogin } from "./lib/handlers/login.ts";
 
 const port = 8080;
 
+const INDEX_ROUTE = new URLPattern({ pathname: "/" });
 const LOGIN_ROUTE = new URLPattern({ pathname: "/login" });
 const CHECK_ROUTE = new URLPattern({ pathname: "/check" });
 
 const handler = async (request: Request): Promise<Response> => {
   try {
+    if (INDEX_ROUTE.test(request.url) && request.method === "GET") {
+      return new Response("howdy partner", { status: 200 });
+    }
+
     if (LOGIN_ROUTE.test(request.url) && request.method === "POST") {
       return await handleLogin(request);
     }
